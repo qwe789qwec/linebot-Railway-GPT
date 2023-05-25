@@ -30,6 +30,8 @@ class ChatGPT:
         
         self.messages = conversation
         self.model = os.getenv("OPENAI_MODEL", default = "gpt-3.5-turbo")
+        self.frequency_penalty = 0.0
+        self.presence_penalty = 0.0
 
 
 
@@ -39,6 +41,8 @@ class ChatGPT:
 
         response = openai.ChatCompletion.create(
 	            model=self.model,
+                frequency_penalty=self.frequency_penalty,
+                presence_penalty=self.presence_penalty,
                 messages = self.messages
 
                 )
