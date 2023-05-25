@@ -46,19 +46,23 @@ class Bearer:
 conversation = []
 
 class ChatGPT:  
-    
-
     def __init__(self):
         self.messages = conversation
         self.prompt = "Your name is wilsonGPT, you made by wilson. Please answer the question in the same language and as short as possible. Don't repeat what I said."
         self.model = os.getenv("OPENAI_MODEL", default = "gpt-3.5-turbo")
+        conversation.append({"role": "user", "content": self.prompt})
+        response = openai.ChatCompletion.create(
+	            model=self.model,
+                messages = self.messages
+                )
+        print("self.prompt：")        
+        print(response['choices'][0]['message']['content'].strip())
 
 
 
     def get_response(self, user_input):
         conversation.append({"role": "user", "content": user_input})
         
-
         response = openai.ChatCompletion.create(
 	            model=self.model,
                 messages = self.messages
@@ -69,10 +73,8 @@ class ChatGPT:
         
         print("AI回答內容：")        
         print(response['choices'][0]['message']['content'].strip())
-
-
-        
         return response['choices'][0]['message']['content'].strip()
+
 
 answer = Bearer()
 chatgpt = ChatGPT()
