@@ -32,9 +32,9 @@ class Bearer:
         data = { "input": self.prompt}
         req = requests.post('https://api.bardapi.dev/chat', headers=self.headers, json=data)
         try:
-            return req.json()['output']
+            print("prompt:" + req.json()['output'])
         except KeyError:
-            return "I don't know what to say."
+            print("free trail end error.")
 
 
     def get_response(self, user_input):
@@ -44,7 +44,7 @@ class Bearer:
         try:
             return req.json()['output']
         except KeyError:
-            return "I don't know what to say."
+            return "free trail end error."
 
 conversation = []
 
@@ -68,7 +68,7 @@ class ChatGPT:
             conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
             print(response['choices'][0]['message']['content'].strip())
         except openai.error.RateLimitError:
-            print("open ai rate limit error")  
+            print("free trail end error.")  
 
 
 
@@ -84,8 +84,8 @@ class ChatGPT:
                 )
             conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
         except openai.error.RateLimitError:
-            print("open ai rate limit error")
-            return "open ai rate limit error"
+            print("free trail end error.")
+            return "free trail end error."
         print("AI回答內容：")        
         print(response['choices'][0]['message']['content'].strip())
         return response['choices'][0]['message']['content'].strip()
