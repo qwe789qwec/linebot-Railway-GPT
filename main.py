@@ -65,13 +65,13 @@ def callback():
 def handle_message(event):
     # Get user's message
     user_message = event.message.text
-    
+    prompt = "Please answer my question in the same language and as short as possible."
     # line_bot_api.reply_message(
     #     event.reply_token,
     #     TextSendMessage(text="you tell me" + event.message.text)
     # )
 
-    reply_msg = answer.get_response(user_message)
+    reply_msg = answer.get_response(prompt + user_message)
     
     
     print(reply_msg)
