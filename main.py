@@ -41,16 +41,18 @@ class ChatGPT:
         
         start_time = time.time()
         print("record time.")
-        response = openai.ChatCompletion.create(
+        try:
+            response = openai.ChatCompletion.create(
 	            model=self.model,
                 frequency_penalty=self.frequency_penalty,
                 presence_penalty=self.presence_penalty,
                 messages = self.messages
 
                 )
-
-        conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
-        
+            conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
+        except openai.error.RateLimitError:
+            print("open ai rate limit error")
+            return "open ai rate limit error"
         print("AI回答內容：")        
         print(response['choices'][0]['message']['content'].strip())
         logging.debug("Response in %.2f seconds: %s" % ((time.time() - start_time), response))
