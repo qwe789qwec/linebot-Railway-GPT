@@ -36,10 +36,10 @@ class Bearer:
     def get_response(self, user_input):
         data = { "input": self.prompt}
         req = requests.post('https://api.bardapi.dev/chat', headers=self.headers, json=data)
-        print(req.json())
+        print("prompt:" + req.json())
         data = { "input": user_input}
         req = requests.post('https://api.bardapi.dev/chat', headers=self.headers, json=data)
-        print(req.json())
+        print("answer:" + req.json())
         try:
             return req.json()['output']
         except KeyError:
@@ -88,10 +88,11 @@ def handle_message(event):
 
     reply_msg = answer.get_response(user_message)
     print(reply_msg)
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=reply_msg)
-    )
+    if(reply_msg.find("I don't know what to say.")<0):
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=reply_msg)
+        )
 
 
 
