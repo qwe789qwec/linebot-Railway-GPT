@@ -38,6 +38,7 @@ class Bearer:
         return req.json()['output']
 
 answer = Bearer()
+reply_flag = True
 
 app = Flask(__name__)
 #run_with_ngrok(app)   #starts ngrok when the app is run
@@ -69,17 +70,18 @@ def handle_message(event):
     #     event.reply_token,
     #     TextSendMessage(text="you tell me" + event.message.text)
     # )
-
-    reply_msg = answer.get_response(prompt)
     user_message = event.message.text
-    reply_msg = answer.get_response(user_message)
-    
-    print(reply_msg)
-
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=reply_msg)
-    )
+    if(reply_flag):
+        reply_msg = answer.get_response(prompt + user_message)
+        print(reply_msg)
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=reply_msg)
+        )
+    if(user_message.find("stop")>0):
+        reply_flag = False
+    elif(user_message.find("start")>0):
+        reply_flag = True
 
 
 
