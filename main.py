@@ -74,17 +74,24 @@ def handle_message(event):
     # Get user's messagea
 
     user_message = event.message.text
-    if(answer.reply_flag):
-        reply_msg = answer.get_response(user_message)
-        print(reply_msg)
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=reply_msg)
-        )
-    if(user_message.find("stop")>0):
-        answer.reply_flag = False
-    elif(user_message.find("start")>0):
-        answer.reply_flag = True
+    # if(user_message.find("stop")>0):
+    #     answer.reply_flag = False
+    # elif(user_message.find("start")>0):
+    #     answer.reply_flag = True
+    # if(answer.reply_flag):
+    #     reply_msg = answer.get_response(user_message)
+    #     print(reply_msg)
+    #     line_bot_api.reply_message(
+    #         event.reply_token,
+    #         TextSendMessage(text=reply_msg)
+    #     )
+
+    reply_msg = answer.get_response(user_message)
+    print(reply_msg)
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=reply_msg)
+    )
 
 
 
