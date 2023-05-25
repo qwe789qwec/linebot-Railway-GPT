@@ -40,8 +40,8 @@ class Bearer:
     def get_response(self, user_input):
         data = { "input": user_input}
         req = requests.post('https://api.bardapi.dev/chat', headers=self.headers, json=data)
-        print("answer:" + req.json()['output'])
         try:
+            print("answer:" + req.json()['output'])
             return req.json()['output']
         except KeyError:
             return "free trail end error."
