@@ -40,6 +40,7 @@ class ChatGPT:
         conversation.append({"role": "user", "content": user_input})
         
         start_time = time.time()
+        print("record time.")
         response = openai.ChatCompletion.create(
 	            model=self.model,
                 frequency_penalty=self.frequency_penalty,
@@ -87,10 +88,10 @@ def handle_message(event):
     # Get user's message
     user_message = event.message.text
     
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text="you tell me" + event.message.text)
-    )
+    # line_bot_api.reply_message(
+    #     event.reply_token,
+    #     TextSendMessage(text="you tell me" + event.message.text)
+    # )
 
     reply_msg = chatgpt.get_response(user_message)
     
