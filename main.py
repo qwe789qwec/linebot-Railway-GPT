@@ -5,6 +5,7 @@ from linebot import LineBotApi, WebhookParser, WebhookHandler
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextMessage
 from linebot.models import TextSendMessage
+import time
 import os
 
 from flask import Flask, request
@@ -38,7 +39,7 @@ class ChatGPT:
     def get_response(self, user_input):
         conversation.append({"role": "user", "content": user_input})
         
-
+        start_time = time.time()
         response = openai.ChatCompletion.create(
 	            model=self.model,
                 frequency_penalty=self.frequency_penalty,
@@ -51,9 +52,7 @@ class ChatGPT:
         
         print("AI回答內容：")        
         print(response['choices'][0]['message']['content'].strip())
-
-
-        
+        logging.debug("Response in %.2f seconds: %s" % ((time.time() - start_time), response))
         return response['choices'][0]['message']['content'].strip()
 	
 
