@@ -48,29 +48,41 @@ conversation = []
 class ChatGPT:  
     def __init__(self):
         self.messages = conversation
+        self.frequency_penalty = 0
+        self.presence_penalty = 6
         self.prompt = "Your name is wilsonGPT, you made by wilson. Please answer the question in the same language and as short as possible. Don't repeat what I said."
         self.model = os.getenv("OPENAI_MODEL", default = "gpt-3.5-turbo")
         conversation.append({"role": "user", "content": self.prompt})
-        response = openai.ChatCompletion.create(
+        print("self.prompt：")
+        try:
+            response = openai.ChatCompletion.create(
 	            model=self.model,
+                frequency_penalty=self.frequency_penalty,
+                presence_penalty=self.presence_penalty,
                 messages = self.messages
+
                 )
-        print("self.prompt：")        
-        print(response['choices'][0]['message']['content'].strip())
+            conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
+            print(response['choices'][0]['message']['content'].strip())
+        except openai.error.RateLimitError:
+            print("open ai rate limit error")  
 
 
 
     def get_response(self, user_input):
         conversation.append({"role": "user", "content": user_input})
-        
-        response = openai.ChatCompletion.create(
+        try:
+            response = openai.ChatCompletion.create(
 	            model=self.model,
+                frequency_penalty=self.frequency_penalty,
+                presence_penalty=self.presence_penalty,
                 messages = self.messages
 
                 )
-
-        conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
-        
+            conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
+        except openai.error.RateLimitError:
+            print("open ai rate limit error")
+            return "open ai rate limit error"
         print("AI回答內容：")        
         print(response['choices'][0]['message']['content'].strip())
         return response['choices'][0]['message']['content'].strip()
