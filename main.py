@@ -28,6 +28,7 @@ class Bearer:
 
     def __init__(self):
         self.headers = { 'Authorization': 'Bearer ' + bard_api_key, 'Content-Type': 'text/plain' }
+        self.reply_flag = True
 
 
 
@@ -38,7 +39,6 @@ class Bearer:
         return req.json()['output']
 
 answer = Bearer()
-reply_flag = True
 
 app = Flask(__name__)
 #run_with_ngrok(app)   #starts ngrok when the app is run
@@ -71,7 +71,7 @@ def handle_message(event):
     #     TextSendMessage(text="you tell me" + event.message.text)
     # )
     user_message = event.message.text
-    if(reply_flag):
+    if(answer.reply_flag):
         reply_msg = answer.get_response(prompt + user_message)
         print(reply_msg)
         line_bot_api.reply_message(
@@ -79,9 +79,9 @@ def handle_message(event):
             TextSendMessage(text=reply_msg)
         )
     if(user_message.find("stop")>0):
-        reply_flag = False
+        answer.reply_flag = False
     elif(user_message.find("start")>0):
-        reply_flag = True
+        answer.reply_flag = True
 
 
 
