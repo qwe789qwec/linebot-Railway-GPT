@@ -29,6 +29,7 @@ class Bearer:
     def __init__(self):
         self.headers = { 'Authorization': 'Bearer ' + bard_api_key, 'Content-Type': 'text/plain' }
         self.prompt = "Your name is wilsonGPT, you made by wilson. Please answer the question in the same language and as short as possible. Don't repeat what I said."
+        data = { "input": self.prompt}
         req = requests.post('https://api.bardapi.dev/chat', headers=self.headers, json=data)
         print("prompt:" + req.json())
 
