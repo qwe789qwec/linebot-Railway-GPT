@@ -29,14 +29,11 @@ class Bearer:
     def __init__(self):
         self.headers = { 'Authorization': 'Bearer ' + bard_api_key, 'Content-Type': 'text/plain' }
         self.prompt = "Your name is wilsonGPT, you made by wilson. Please answer the question in the same language and as short as possible. Don't repeat what I said."
-        self.reply_flag = True
-
+        req = requests.post('https://api.bardapi.dev/chat', headers=self.headers, json=data)
+        print("prompt:" + req.json())
 
 
     def get_response(self, user_input):
-        data = { "input": self.prompt}
-        req = requests.post('https://api.bardapi.dev/chat', headers=self.headers, json=data)
-        print("prompt:" + req.json())
         data = { "input": user_input}
         req = requests.post('https://api.bardapi.dev/chat', headers=self.headers, json=data)
         print("answer:" + req.json())
@@ -74,29 +71,16 @@ def handle_message(event):
     # Get user's messagea
 
     user_message = event.message.text
-    # if(user_message.find("stop")>0):
-    #     answer.reply_flag = False
-    # elif(user_message.find("start")>0):
-    #     answer.reply_flag = True
-    # if(answer.reply_flag):
-    #     reply_msg = answer.get_response(user_message)
-    #     print(reply_msg)
-    #     line_bot_api.reply_message(
-    #         event.reply_token,
-    #         TextSendMessage(text=reply_msg)
-    #     )
 
-    reply_msg = answer.get_response(user_message)
-    print(reply_msg)
-    if(reply_msg.find("I don't know what to say.")<0):
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=reply_msg)
-        )
-
-
-
-
+    if(user_message.startswith("togpt:")):
+        user_message = user_message.replace("togpt:","")
+        reply_msg = answer.get_response(user_message)
+        print(reply_msg)
+        if(reply_msg.find("I don't know what to say.")<0):
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=reply_msg)
+            )
 
 if __name__ == '__main__':
 	    app.run(debug=True, port=os.getenv("PORT", default=5000))
