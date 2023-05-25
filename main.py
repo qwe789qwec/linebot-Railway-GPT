@@ -73,7 +73,6 @@ def callback():
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
     # handle webhook body
-    TextSendMessage(text="get message")
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
@@ -84,7 +83,11 @@ def callback():
 def handle_message(event):
     # Get user's message
     user_message = event.message.text
-
+    
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text="you tell me" + event.message.text)
+    )
 
     reply_msg = chatgpt.get_response(user_message)
     
