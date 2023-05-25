@@ -27,14 +27,13 @@ class Bearer:
     
 
     def __init__(self):
-        headers = { 'Authorization': 'Bearer ' + bard_api_key, 'Content-Type': 'text/plain' }
+        self.headers = { 'Authorization': 'Bearer ' + bard_api_key, 'Content-Type': 'text/plain' }
 
 
 
     def get_response(self, user_input):
-        headers = { 'Authorization': 'Bearer ' + bard_api_key, 'Content-Type': 'text/plain' }
         data = { "input": user_input}
-        req = requests.post('http://localhost:4000/chat', headers=headers, json=data)
+        req = requests.post('https://api.bardapi.dev/chat', headers=self.headers, json=data)
         print(req.json())
         return req.json()['output']
 
