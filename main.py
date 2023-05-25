@@ -15,7 +15,7 @@ from flask import Flask, request
 #################
 import openai
 	
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# openai.api_key = os.getenv("OPENAI_API_KEY")
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 #parser = WebhookParser(os.getenv("LINE_CHANNEL_SECRET"))
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET")) 
