@@ -40,7 +40,10 @@ class Bearer:
         data = { "input": user_input}
         req = requests.post('https://api.bardapi.dev/chat', headers=self.headers, json=data)
         print(req.json())
-        return req.json()['output']
+        try:
+            return req.json()['output']
+        except KeyError:
+            return "I don't know what to say."
 
 answer = Bearer()
 
