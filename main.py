@@ -28,11 +28,15 @@ class Bearer:
 
     def __init__(self):
         self.headers = { 'Authorization': 'Bearer ' + bard_api_key, 'Content-Type': 'text/plain' }
+        self.prompt = "Your name is wilsonGPT, you made by wilson. Please answer the question in the same language and as short as possible. Don't repeat what I said."
         self.reply_flag = True
 
 
 
     def get_response(self, user_input):
+        data = { "input": self.prompt}
+        req = requests.post('https://api.bardapi.dev/chat', headers=self.headers, json=data)
+        print(req.json())
         data = { "input": user_input}
         req = requests.post('https://api.bardapi.dev/chat', headers=self.headers, json=data)
         print(req.json())
@@ -65,14 +69,9 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     # Get user's messagea
-    prompt = "Your name is wilsonGPT, you made by wilson. Please answer the question in the same language and as short as possible. Don't repeat what I said."
-    # line_bot_api.reply_message(
-    #     event.reply_token,
-    #     TextSendMessage(text="you tell me" + event.message.text)
-    # )
+
     user_message = event.message.text
     if(answer.reply_flag):
-        reply_msg = answer.get_response(prompt)
         reply_msg = answer.get_response(user_message)
         print(reply_msg)
         line_bot_api.reply_message(
