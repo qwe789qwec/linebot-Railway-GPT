@@ -15,7 +15,7 @@ from flask import Flask, request
 #################
 import openai
 	
-# openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 #parser = WebhookParser(os.getenv("LINE_CHANNEL_SECRET"))
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET")) 
@@ -43,7 +43,39 @@ class Bearer:
         except KeyError:
             return "I don't know what to say."
 
+conversation = []
+
+class ChatGPT:  
+    
+
+    def __init__(self):
+        self.messages = conversation
+        self.prompt = "Your name is wilsonGPT, you made by wilson. Please answer the question in the same language and as short as possible. Don't repeat what I said."
+        self.model = os.getenv("OPENAI_MODEL", default = "gpt-3.5-turbo")
+
+
+
+    def get_response(self, user_input):
+        conversation.append({"role": "user", "content": user_input})
+        
+
+        response = openai.ChatCompletion.create(
+	            model=self.model,
+                messages = self.messages
+
+                )
+
+        conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
+        
+        print("AI回答內容：")        
+        print(response['choices'][0]['message']['content'].strip())
+
+
+        
+        return response['choices'][0]['message']['content'].strip()
+
 answer = Bearer()
+chatgpt = ChatGPT()
 
 app = Flask(__name__)
 #run_with_ngrok(app)   #starts ngrok when the app is run
@@ -73,13 +105,13 @@ def handle_message(event):
 
     user_message = event.message.text
 
-    if(user_message.startswith("togpt:")):
-        user_message = user_message.replace("togpt:","")
+    if(user_message.startswith("tobard:")):
+        user_message = user_message.replace("tobard:","")
         print(user_message)
         if(user_message.startswith("test")):
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text="Get your message.")
+                TextSendMessage(text="Get your bard message.")
             )
         else:
             reply_msg = answer.get_response(user_message)
@@ -89,6 +121,23 @@ def handle_message(event):
                     event.reply_token,
                     TextSendMessage(text=reply_msg)
                 )
+
+    if(user_message.startswith("togpt:")):
+        user_message = user_message.replace("togpt:","")
+        print(user_message)
+        if(user_message.startswith("test")):
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="Get your gpt message.")
+            )
+        else:
+            reply_msg = chatgpt.get_response(user_message)
+            print(reply_msg)
+            if(reply_msg.find("I don't know what to say.")<0):
+                line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=reply_msg)
+    )
 
 if __name__ == '__main__':
 	    app.run(debug=True, port=os.getenv("PORT", default=5000))
