@@ -31,7 +31,10 @@ class Bearer:
         self.prompt = "Your name is wilsonGPT, you made by wilson. Please answer the question in the same language and as short as possible. Don't repeat what I said."
         data = { "input": self.prompt}
         req = requests.post('https://api.bardapi.dev/chat', headers=self.headers, json=data)
-        print("prompt:" + req.json()['output'])
+        try:
+            return req.json()['output']
+        except KeyError:
+            return "I don't know what to say."
 
 
     def get_response(self, user_input):
