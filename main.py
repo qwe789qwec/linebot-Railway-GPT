@@ -76,7 +76,7 @@ def handle_message(event):
     if(user_message.startswith("togpt:")):
         user_message = user_message.replace("togpt:","")
         print(user_message)
-        if(user_message.startwith("test")):
+        if(user_message.startswith("test")):
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text="Get your message.")
