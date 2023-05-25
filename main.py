@@ -74,13 +74,19 @@ def handle_message(event):
 
     if(user_message.startswith("togpt:")):
         user_message = user_message.replace("togpt:","")
-        reply_msg = answer.get_response(user_message)
-        print(reply_msg)
-        if(reply_msg.find("I don't know what to say.")<0):
+        if(user_message.startwith("test")):
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text=reply_msg)
+                TextSendMessage(text="Get your message.")
             )
+        else:
+            reply_msg = answer.get_response(user_message)
+            print(reply_msg)
+            if(reply_msg.find("I don't know what to say.")<0):
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=reply_msg)
+                )
 
 if __name__ == '__main__':
 	    app.run(debug=True, port=os.getenv("PORT", default=5000))
