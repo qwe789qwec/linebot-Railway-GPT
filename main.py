@@ -8,9 +8,9 @@ from linebot.models import TextSendMessage
 import time
 import os
 
+import requests
+
 from flask import Flask, request
-
-
 
 #################
 import openai
@@ -19,49 +19,26 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 #parser = WebhookParser(os.getenv("LINE_CHANNEL_SECRET"))
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET")) 
+bard_api_key = os.getenv("BARD_API_KEY")
 
 
-	
-conversation = []
 
-class ChatGPT:  
+class Bearer:  
     
 
     def __init__(self):
-        
-        self.messages = conversation
-        self.model = os.getenv("OPENAI_MODEL", default = "gpt-3.5-turbo")
-        self.frequency_penalty = 0.0
-        self.presence_penalty = 0.0
+        headers = { 'Authorization': 'Bearer ' + bard_api_key, 'Content-Type': 'text/plain' }
 
 
 
     def get_response(self, user_input):
-        conversation.append({"role": "user", "content": user_input})
-        
-        start_time = time.time()
-        print("record time.")
-        try:
-            response = openai.ChatCompletion.create(
-	            model=self.model,
-                frequency_penalty=self.frequency_penalty,
-                presence_penalty=self.presence_penalty,
-                messages = self.messages
+        headers = { 'Authorization': 'Bearer ' + bard_api_key, 'Content-Type': 'text/plain' }
+        data = { "input": user_input}
+        req = requests.post('http://localhost:4000/chat', headers=headers, json=data)
+        print(req.json())
+        return req.json()['output']
 
-                )
-            conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
-        except openai.error.RateLimitError:
-            print("open ai rate limit error")
-            return "open ai rate limit error"
-        print("AI回答內容：")        
-        print(response['choices'][0]['message']['content'].strip())
-        logging.debug("Response in %.2f seconds: %s" % ((time.time() - start_time), response))
-        return response['choices'][0]['message']['content'].strip()
-	
-
-
-
-chatgpt = ChatGPT()
+answer = Bearer()
 
 app = Flask(__name__)
 #run_with_ngrok(app)   #starts ngrok when the app is run
@@ -95,7 +72,7 @@ def handle_message(event):
     #     TextSendMessage(text="you tell me" + event.message.text)
     # )
 
-    reply_msg = chatgpt.get_response(user_message)
+    reply_msg = answer.get_response(user_message)
     
     
     print(reply_msg)
