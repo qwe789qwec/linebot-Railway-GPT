@@ -63,8 +63,8 @@ class Hugging:
     def get_response(self, user_input):
         output = self.query({
             "inputs": {
-                "past_user_inputs": [pastuserimputs],
-                "generated_responses": [generatedresponses],
+                "past_user_inputs": [self.prompt],
+                "generated_responses": [self.response],
                 "text": user_input
             },
         })
