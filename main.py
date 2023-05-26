@@ -20,12 +20,10 @@ line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 #parser = WebhookParser(os.getenv("LINE_CHANNEL_SECRET"))
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET")) 
 bard_api_key = os.getenv("BARD_API_KEY")
+HUGGING_API_KEY = os.getenv("HUGGING_API_KEY")
 
 
-
-class Bearer:  
-    
-
+class Bard:  
     def __init__(self):
         self.headers = { 'Authorization': 'Bearer ' + bard_api_key, 'Content-Type': 'text/plain' }
         self.prompt = "Your name is wilsonGPT, you made by wilson. Please answer the question in the same language and as short as possible. Don't repeat what I said."
@@ -36,13 +34,36 @@ class Bearer:
         except KeyError:
             print("free trial end error.")
 
-
     def get_response(self, user_input):
         data = { "input": user_input}
         req = requests.post('https://api.bardapi.dev/chat', headers=self.headers, json=data)
         try:
             print("answer:" + req.json()['output'])
             return req.json()['output']
+        except KeyError:
+            return "free trial end error."
+
+class Hugging:  
+    def __init__(self):
+        self.API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium"
+        self.headers = {"Authorization": "Bearer " + HUGGING_API_KEY}
+
+    def query(self, payload):
+        response = requests.post(self.API_URL, headers=self.headers, json=payload)
+        return response.json()
+
+    def get_response(self, user_input):
+        output = self.query({
+            "inputs": {
+                "past_user_inputs": ["Which movie is the best ?"],
+                "generated_responses": ["It's Die Hard for sure."],
+                "text": "Can you explain why ?"
+            },
+        })
+        try:
+            print("Hugging:")
+            print(output)
+            return output
         except KeyError:
             return "free trial end error."
 
@@ -91,8 +112,9 @@ class ChatGPT:
         return response['choices'][0]['message']['content'].strip()
 
 
-answer = Bearer()
+bard = Bard()
 chatgpt = ChatGPT()
+hugging = Hugging()
 
 app = Flask(__name__)
 #run_with_ngrok(app)   #starts ngrok when the app is run
@@ -131,7 +153,7 @@ def handle_message(event):
                 TextSendMessage(text="Get your bard message.")
             )
         else:
-            reply_msg = answer.get_response(user_message)
+            reply_msg = bard.get_response(user_message)
             print(reply_msg)
             if(reply_msg.find("I don't know what to say.")<0):
                 line_bot_api.reply_message(
@@ -154,7 +176,24 @@ def handle_message(event):
                 line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=reply_msg)
-    )
+                )
+
+    if(user_message.startswith("tohug:")):
+        user_message = user_message.replace("tohug:","")
+        print(user_message)
+        if(user_message.startswith("test")):
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="Get your hug message.")
+            )
+        else:
+            reply_msg = hugging.get_response(user_message)
+            print(reply_msg)
+            if(reply_msg.find("I don't know what to say.")<0):
+                line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=reply_msg)
+                )
 
 if __name__ == '__main__':
 	    app.run(debug=True, port=os.getenv("PORT", default=5000))
