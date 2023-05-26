@@ -43,10 +43,17 @@ class Bard:
         except KeyError:
             return "free trial end error."
 
+pastuserimputs = []
+generatedresponses = []
+
 class Hugging:  
     def __init__(self):
         self.API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium"
+        self.prompt = "Your name is wilsonGPT, you made by wilson. Please answer the question in the same language and as short as possible. Don't repeat what I said."
+        self.response = "Ok, what is your question?"
         self.headers = {"Authorization": "Bearer " + HUGGING_API_KEY}
+        # pastuserimputs.append(self.prompt)
+        # generatedresponses.append(self.response)
 
     def query(self, payload):
         response = requests.post(self.API_URL, headers=self.headers, json=payload)
@@ -55,15 +62,17 @@ class Hugging:
     def get_response(self, user_input):
         output = self.query({
             "inputs": {
-                "past_user_inputs": ["Which movie is the best ?"],
-                "generated_responses": ["It's Die Hard for sure."],
-                "text": "Can you explain why ?"
+                "past_user_inputs": [pastuserimputs],
+                "generated_responses": [generatedresponses],
+                "text": user_input
             },
         })
         try:
+            # pastuserimputs = output['past_user_inputs']
+            # generatedresponses = output['generated_responses']
             print("Hugging:")
-            print(output)
-            return output
+            print(output['generated_text'])
+            return output['generated_text']
         except KeyError:
             return "free trial end error."
 
