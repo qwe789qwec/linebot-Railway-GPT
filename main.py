@@ -123,10 +123,32 @@ class ChatGPT:
         print(response['choices'][0]['message']['content'].strip())
         return response['choices'][0]['message']['content'].strip()
 
+class GPT2:  
+    def __init__(self):
+        self.API_URL = "https://api-inference.huggingface.co/models/gpt2"
+        self.prompt = "Your name is wilsonGPT, you made by wilson. Please answer the question in the same language and as short as possible. Don't repeat what I said."
+        self.headers = {"Authorization": "Bearer " + HUGGING_API_KEY}
+
+    def query(self, payload):
+        response = requests.post(self.API_URL, headers=self.headers, json=payload)
+        return response.json()
+
+    def get_response(self, user_input):
+        output = self.query({
+                    "inputs": self.prompt + "here is the question." + user_input,
+                })
+        try:
+            print("gpt2:")
+            print(output['generated_text'])
+            return output['generated_text']
+        except KeyError:
+            print(output)
+            return "free trial end error."
 
 bard = Bard()
 chatgpt = ChatGPT()
 hugging = Hugging()
+gpt2 = GPT2()
 
 app = Flask(__name__)
 #run_with_ngrok(app)   #starts ngrok when the app is run
@@ -182,6 +204,22 @@ def handle_message(event):
             )
         else:
             reply_msg = chatgpt.get_response(user_message)
+            if(reply_msg.find("I don't know what to say.")<0):
+                line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=reply_msg)
+                )
+
+    if(user_message.startswith("togpt2:")):
+        user_message = user_message.replace("togpt2:","")
+        print(user_message)
+        if(user_message.startswith("test")):
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="Get your gpt2 message.")
+            )
+        else:
+            reply_msg = gpt2.get_response(user_message)
             if(reply_msg.find("I don't know what to say.")<0):
                 line_bot_api.reply_message(
                 event.reply_token,
