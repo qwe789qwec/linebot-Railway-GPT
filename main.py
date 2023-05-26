@@ -100,7 +100,7 @@ class ChatGPT:
             conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
             print(response['choices'][0]['message']['content'].strip())
         except openai.error.RateLimitError:
-            print(response)
+            # print(response)
             print("free trial end error.")  
 
 
