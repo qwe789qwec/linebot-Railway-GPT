@@ -166,7 +166,6 @@ def handle_message(event):
             )
         else:
             reply_msg = bard.get_response(user_message)
-            print(reply_msg)
             if(reply_msg.find("I don't know what to say.")<0):
                 line_bot_api.reply_message(
                     event.reply_token,
@@ -183,7 +182,6 @@ def handle_message(event):
             )
         else:
             reply_msg = chatgpt.get_response(user_message)
-            print(reply_msg)
             if(reply_msg.find("I don't know what to say.")<0):
                 line_bot_api.reply_message(
                 event.reply_token,
@@ -200,7 +198,6 @@ def handle_message(event):
             )
         else:
             reply_msg = hugging.get_response(user_message)
-            print(reply_msg)
             if(reply_msg.find("I don't know what to say.")<0):
                 line_bot_api.reply_message(
                 event.reply_token,
