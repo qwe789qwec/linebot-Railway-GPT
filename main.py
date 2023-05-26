@@ -41,6 +41,7 @@ class Bard:
             print("answer:" + req.json()['output'])
             return req.json()['output']
         except KeyError:
+            print(req)
             return "free trial end error."
 
 pastuserimputs = []
@@ -74,6 +75,7 @@ class Hugging:
             print(output['generated_text'])
             return output['generated_text']
         except KeyError:
+            print(output)
             return "free trial end error."
 
 conversation = []
@@ -98,6 +100,7 @@ class ChatGPT:
             conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
             print(response['choices'][0]['message']['content'].strip())
         except openai.error.RateLimitError:
+            print(response)
             print("free trial end error.")  
 
 
