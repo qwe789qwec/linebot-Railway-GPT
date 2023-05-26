@@ -34,7 +34,7 @@ class Bearer:
         try:
             print("prompt:" + req.json()['output'])
         except KeyError:
-            print("free trail end error.")
+            print("free trial end error.")
 
 
     def get_response(self, user_input):
@@ -44,7 +44,7 @@ class Bearer:
             print("answer:" + req.json()['output'])
             return req.json()['output']
         except KeyError:
-            return "free trail end error."
+            return "free trial end error."
 
 conversation = []
 
@@ -68,7 +68,7 @@ class ChatGPT:
             conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
             print(response['choices'][0]['message']['content'].strip())
         except openai.error.RateLimitError:
-            print("free trail end error.")  
+            print("free trial end error.")  
 
 
 
@@ -84,8 +84,8 @@ class ChatGPT:
                 )
             conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
         except openai.error.RateLimitError:
-            print("free trail end error.")
-            return "free trail end error."
+            print("free trial end error.")
+            return "free trial end error."
         print("AI回答內容：")        
         print(response['choices'][0]['message']['content'].strip())
         return response['choices'][0]['message']['content'].strip()
