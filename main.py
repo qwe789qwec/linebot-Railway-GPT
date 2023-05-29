@@ -134,17 +134,20 @@ class GPT2:
         return response.json()
 
     def get_response(self, user_input):
+        gpt_input = self.prompt + " here is the question. " + user_input
         output = self.query({
-                    "inputs": self.prompt + "here is the question." + user_input,
+                    "inputs": gpt_input,
                 })
+        # turn output into string
+        output = output[0]['generated_text']
+        output = output.replace(gpt_input, "")
         try:
             print("gpt2:")
-            print(output['generated_text'])
-            return output['generated_text']
-        except KeyError:
             print(output)
+            return output
+        except KeyError:
             return "free trial end error."
-
+        
 bard = Bard()
 chatgpt = ChatGPT()
 hugging = Hugging()
